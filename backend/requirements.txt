@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic
+pydantic-settings
+python-jose[cryptography]
+passlib[argon2]
+python-multipart
+langchain==0.3.0
+langchain-community==0.3.0
+langchain-google-genai==2.0.0
+faiss-cpu
+sentence-transformers
+python-dotenv
+email-validator
