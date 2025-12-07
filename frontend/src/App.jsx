@@ -11,6 +11,12 @@ import Consultations from './pages/Consultations';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 
+import ExpertAvailability from './pages/ExpertAvailability';
+import BookAppointment from './pages/BookAppointment';
+import VideoCall from './pages/VideoCall';
+import ExpertsList from './pages/ExpertsList';
+import MyAppointments from './pages/MyAppointments';
+
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
@@ -44,6 +50,11 @@ function App() {
         <Route path="consultations" element={<Consultations />} />
         <Route path="profile" element={<Profile />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="expert/availability" element={<ExpertAvailability />} />
+        <Route path="book/:expertId" element={<BookAppointment />} />
+        <Route path="room/:roomId" element={<VideoCall />} />
+        <Route path="experts" element={<ExpertsList />} />
+        <Route path="appointments" element={<MyAppointments />} />
         {/* Add more dashboard routes here */}
       </Route>
     </Routes>

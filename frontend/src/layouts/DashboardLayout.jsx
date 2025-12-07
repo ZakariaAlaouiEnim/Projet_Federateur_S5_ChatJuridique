@@ -1,6 +1,6 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { MessageSquare, FileText, Settings, LogOut, User } from 'lucide-react';
+import { MessageSquare, FileText, Settings, LogOut, User, Users, Calendar, Clock } from 'lucide-react';
 
 const DashboardLayout = () => {
     const { user, logout } = useAuth();
@@ -28,6 +28,20 @@ const DashboardLayout = () => {
                         <FileText size={20} />
                         <span className="font-medium">Consultations</span>
                     </Link>
+                    <Link to="/dashboard/experts" className="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 hover:text-indigo-600 rounded-md transition-colors">
+                        <Users size={20} />
+                        <span className="font-medium">Experts</span>
+                    </Link>
+                    <Link to="/dashboard/appointments" className="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 hover:text-indigo-600 rounded-md transition-colors">
+                        <Calendar size={20} />
+                        <span className="font-medium">My Appointments</span>
+                    </Link>
+                    {user?.role === 'expert' && (
+                        <Link to="/dashboard/expert/availability" className="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 hover:text-indigo-600 rounded-md transition-colors">
+                            <Clock size={20} />
+                            <span className="font-medium">My Availability</span>
+                        </Link>
+                    )}
                     <Link to="/dashboard/profile" className="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 hover:text-indigo-600 rounded-md transition-colors">
                         <User size={20} />
                         <span className="font-medium">Profile</span>

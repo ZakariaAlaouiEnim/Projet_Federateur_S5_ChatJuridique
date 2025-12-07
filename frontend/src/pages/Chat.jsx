@@ -15,6 +15,21 @@ const Chat = () => {
     };
 
     useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                const response = await api.get('/chat/history');
+                if (response.data && response.data.length > 0) {
+                    setMessages(response.data);
+                }
+            } catch (error) {
+                console.error("Failed to fetch chat history:", error);
+            }
+        };
+
+        fetchHistory();
+    }, []);
+
+    useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
@@ -58,8 +73,8 @@ const Chat = () => {
 
                             <div className={`flex flex-col gap-2 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                                 <div className={`p-4 rounded-2xl ${msg.role === 'user'
-                                        ? 'bg-indigo-600 text-white rounded-tr-none'
-                                        : 'bg-slate-100 text-slate-800 rounded-tl-none'
+                                    ? 'bg-indigo-600 text-white rounded-tr-none'
+                                    : 'bg-slate-100 text-slate-800 rounded-tl-none'
                                     }`}>
                                     <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
                                 </div>

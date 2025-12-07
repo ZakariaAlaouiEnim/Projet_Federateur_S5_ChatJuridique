@@ -39,6 +39,7 @@ class User(Base):
     expert_profile = relationship("Expert", back_populates="user", uselist=False)
     conversations = relationship("Conversation", back_populates="user")
     consultations = relationship("Consultation", back_populates="user")
+    appointments = relationship("Appointment", back_populates="user")
 
 class Expert(Base):
     __tablename__ = "experts"
@@ -50,6 +51,8 @@ class Expert(Base):
 
     user = relationship("User", back_populates="expert_profile")
     consultations = relationship("Consultation", back_populates="expert")
+    availability = relationship("ExpertAvailability", back_populates="expert")
+    appointments = relationship("Appointment", back_populates="expert")
 
 class LegalSource(Base):
     __tablename__ = "legal_sources"
@@ -80,6 +83,7 @@ class Message(Base):
     role = Column(String, nullable=False) # user, assistant
     content = Column(Text, nullable=False)
     citations = Column(JSON, nullable=True) # List of LegalSource IDs
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     conversation = relationship("Conversation", back_populates="messages")
 
@@ -97,3 +101,41 @@ class Consultation(Base):
 
     user = relationship("User", back_populates="consultations")
     expert = relationship("Expert", back_populates="consultations")
+
+class AppointmentStatus(str, enum.Enum):
+    PENDING = "pending"
+    EXPERT_PROPOSED_NEW_TIME = "expert_proposed_new_time"
+    USER_PROPOSED_NEW_TIME = "user_proposed_new_time"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+    COMPLETED = "completed"
+
+class ExpertAvailability(Base):
+    __tablename__ = "expert_availability"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    expert_id = Column(UUID(as_uuid=True), ForeignKey("experts.id"), nullable=False)
+    day_of_week = Column(String, nullable=True) # 0=Monday, 6=Sunday
+    specific_date = Column(DateTime, nullable=True) # For specific overrides
+    start_time = Column(String, nullable=False) # Format "HH:MM"
+    end_time = Column(String, nullable=False) # Format "HH:MM"
+    is_recurring = Column(Boolean, default=True)
+
+    expert = relationship("Expert", back_populates="availability")
+
+class Appointment(Base):
+    __tablename__ = "appointments"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    expert_id = Column(UUID(as_uuid=True), ForeignKey("experts.id"), nullable=False)
+    consultation_id = Column(UUID(as_uuid=True), ForeignKey("consultations.id"), nullable=True)
+    start_time = Column(DateTime(timezone=True), nullable=False)
+    end_time = Column(DateTime(timezone=True), nullable=False)
+    status = Column(String, default=AppointmentStatus.PENDING)
+    meeting_link = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    user = relationship("User", back_populates="appointments")
+    expert = relationship("Expert", back_populates="appointments")
+    consultation = relationship("Consultation")
